@@ -1,0 +1,19 @@
+{
+  "weapons": [
+    {
+    "id": 1,
+    "name": "топорик",
+    "min_damage": 2.5,
+    "max_damage": 4.1,
+    "stamina_per_hit": 2
+    }
+  ],
+  "armor": [
+    {
+      "id": 2,
+      "name":"кожаная броня",
+      "defence": 1.2,
+      "stamina_per_turn": 1
+    }
+  ]
+}
