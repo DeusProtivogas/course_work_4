@@ -1,5 +1,4 @@
 from data.units.BaseUnit import BaseUnit
-from typing import Optional
 from random import randint
 
 
@@ -11,6 +10,3 @@ class Enemy(BaseUnit):
         else:
             res = self._hit(target=target)
         return res
-
-    # def hit(self, target: BaseUnit) -> Optional[float]:
-    #     return self._hit(target)

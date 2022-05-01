@@ -10,22 +10,15 @@ from data.equipment.weapons import Weapon
 
 BASE_STAMINA_REGEN = 1
 
-# @dataclass
+
 class BaseUnit(ABC):
-#     - имя персонажа,
-# - класс персонажа (объект, Воин или Вор),
-# - очки здоровья,
-# - очки выносливости,
-# - оружие,
-# - броня,
-# - использован ли скил в бою
     name: str
     char_class: UnitClass
     hit_points: float
     stamina_points: float
     weapon: Weapon
     armor: Armor
-    used_skill_in_combat: bool # ?
+    used_skill_in_combat: bool
 
     def __init__(self, char_class: Type[UnitClass], weapon: Weapon, armor: Armor, name: str):
         self.name = name
@@ -58,7 +51,7 @@ class BaseUnit(ABC):
         total_damage = round(dmg - target.total_armor, 1)
 
         self.stamina_points -= self.weapon.stamina_per_hit
-        # target.stamina_points -= target.armor.stamina_per_turn
+        # target.stamina_points -= target.armor.stamina_per_turn # Возможность терять выносливость про ударе
         if target.stamina_points < 0:
             target.stamina_points = 0
 
@@ -87,15 +80,11 @@ class BaseUnit(ABC):
 
         target.suffer_damage(dmg)
 
-        # return self.char_class.skill.use()
         return f"{self.name} использует {self.char_class.skill.name} и наносит {dmg} урона сопернику."
+
 
     def regenerate_stamina(self):
         regen_stamina = round(BASE_STAMINA_REGEN * self.char_class.stamina, 1)
-        # if regen_stamina + self.stamina_points < self.char_class.max_stamina:
-        #     self.stamina_points += regen_stamina
-        # else:
-        #     self.stamina_points = self.char_class.max_stamina
         self.stamina_points = round(self.stamina_points + regen_stamina, 1)
         self.stamina_points = self.stamina_points if self.stamina_points <= self.char_class.max_stamina \
             else self.char_class.max_stamina

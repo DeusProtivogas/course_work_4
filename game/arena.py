@@ -27,7 +27,6 @@ class Arena():
         self.enemy = enemy
 
     def game_over(self, results: str):
-        # TODO: battle results
         self.game_is_on = False
         self.game_results = results
         return results
@@ -56,19 +55,6 @@ class Arena():
         self.stamina_regen()
 
         enemy_attack_results = self.enemy.hit(self.player)
-        # if damage:
-        #     if damage > 0:
-        #         self.player.suffer_damage(damage)
-        #         result = f"{self.enemy.name}, используя {self.enemy.weapon.name}, пробивает {self.enemy.armor.name} " \
-        #                  f"соперника и наносит {damage} урона."
-        #     else:
-        #         result = f"{self.enemy.name}, используя {self.enemy.weapon.name}, наносит удар, " \
-        #                  f"но {self.enemy.armor.name} соперника его останавливает."
-        # else:
-        #     result = f"{self.enemy.name} попытался использовать {self.enemy.weapon.name}, " \
-        #              f"но у него не хватило выносливости."
-
-        print(enemy_attack_results)
 
         return enemy_attack_results
 

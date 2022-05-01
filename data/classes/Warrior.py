@@ -13,6 +13,3 @@ class WarriorClass(UnitClass):
     stamina: float = 0.9
     armor: float = 1.2
     skill: DefaultSkill = ferocious_kick
-
-# w = WarriorClass()
-# print(w)
