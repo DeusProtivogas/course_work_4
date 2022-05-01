@@ -2,7 +2,11 @@ import json
 import os
 
 import marshmallow_dataclass
-from typing import Union
+from typing import Union, Dict
+
+from data.classes.Thief import ThiefClass
+from data.classes.UnitClass import UnitClass
+from data.classes.Warrior import WarriorClass
 from data.equipment.EquipmentData import EquipmentData
 
 BASE_DIR: str = os.path.abspath(os.path.dirname(__file__))
@@ -31,3 +35,12 @@ def load_equip():
 # d = load_equip()
 # print(type(d))
 # print(d)
+
+
+classes_list: Dict[str, UnitClass] = {
+    WarriorClass.name: WarriorClass,
+    ThiefClass.name: ThiefClass,
+}
+
+# print(classes)
+#

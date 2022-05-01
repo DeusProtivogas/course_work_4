@@ -1,7 +1,8 @@
-from dataclasses import dataclass
 from __future__ import annotations
+
+from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Union, Type
 
 from data.classes.UnitClass import UnitClass
 from data.equipment.armor import Armor
@@ -9,7 +10,7 @@ from data.equipment.weapons import Weapon
 
 BASE_STAMINA_REGEN = 1
 
-@dataclass
+# @dataclass
 class BaseUnit(ABC):
 #     - имя персонажа,
 # - класс персонажа (объект, Воин или Вор),
@@ -26,6 +27,15 @@ class BaseUnit(ABC):
     armor: Armor
     used_skill_in_combat: bool # ?
 
+    def __init__(self, char_class: Type[UnitClass], weapon: Weapon, armor: Armor, name: str):
+        self.name = name
+        self.char_class = char_class
+        self.hit_points = self.char_class.max_health
+        self.stamina_points = self.char_class.max_stamina
+        self.weapon = weapon
+        self.armor = armor
+        self.used_skill_in_combat = False
+
     def equip_weapon(self, weapon: Weapon):
         self.weapon = weapon
 
@@ -38,35 +48,55 @@ class BaseUnit(ABC):
             return 0
         return self.armor.defence * self.char_class.armor
 
-    def _hit(self, target: BaseUnit) -> Optional[float]:
+    def _hit(self, target: BaseUnit) -> Optional[str]:
         if self.stamina_points < self.weapon.stamina_per_hit:
-            return None
+            result = f"{self.name} попытался использовать {self.weapon.name}, " \
+                     f"но у него не хватило выносливости."
+            return result
 
         dmg = self.weapon.damage * self.char_class.attack
-        total_damage = dmg - target.total_armor
-        if total_damage < 0:
-            return 0
+        total_damage = round(dmg - target.total_armor, 1)
+
         self.stamina_points -= self.weapon.stamina_per_hit
-        return total_damage
+        # target.stamina_points -= target.armor.stamina_per_turn
+        if target.stamina_points < 0:
+            target.stamina_points = 0
+
+        if total_damage < 0:
+            result = f"{self.name}, используя {self.weapon.name}, наносит удар, " \
+                     f"но {target.armor.name} соперника его останавливает."
+            return result
+
+        target.suffer_damage(total_damage)
+        result = f"{self.name}, используя {self.weapon.name}, пробивает {target.armor.name} " \
+                 f"соперника и наносит {total_damage} урона."
+        return result
 
     def suffer_damage(self, damage: float):
-        self.hit_points -= damage
+        self.hit_points = round(self.hit_points - damage, 1)
         if self.hit_points < 0:
             self.hit_points = 0
 
-    def use_skill(self) -> Optional[float]:
+    def use_skill(self, target: BaseUnit) -> str:
         if self.stamina_points < self.char_class.skill.stamina_cost:
-            return None
+            return f"{self.name} попытался использовать {self.char_class.skill.name}, но у него не хватило выносливости."
+        if self.used_skill_in_combat:
+            return f"Навык уже использован."
         self.used_skill_in_combat = True
-        return round(self.char_class.skill.damage, 1)
+        dmg = round(self.char_class.skill.damage, 1)
+
+        target.suffer_damage(dmg)
+
+        # return self.char_class.skill.use()
+        return f"{self.name} использует {self.char_class.skill.name} и наносит {dmg} урона сопернику."
 
     def regenerate_stamina(self):
-        regen_stamina = BASE_STAMINA_REGEN * self.char_class.stamina
+        regen_stamina = round(BASE_STAMINA_REGEN * self.char_class.stamina, 1)
         # if regen_stamina + self.stamina_points < self.char_class.max_stamina:
         #     self.stamina_points += regen_stamina
         # else:
         #     self.stamina_points = self.char_class.max_stamina
-        self.stamina_points += regen_stamina
+        self.stamina_points = round(self.stamina_points + regen_stamina, 1)
         self.stamina_points = self.stamina_points if self.stamina_points <= self.char_class.max_stamina \
             else self.char_class.max_stamina
 

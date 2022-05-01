@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from typing import Dict
+
 from data.skills import DefaultSkill
 
 @dataclass
@@ -11,3 +13,9 @@ class UnitClass(ABC):
     stamina: float
     armor: float
     skill: DefaultSkill
+
+#
+# classes: Dict[str, UnitClass] = {
+#
+# }
+
